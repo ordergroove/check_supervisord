@@ -4,21 +4,37 @@ A Nagios NRPE plugin written in Python to monitor Supervisord server and process
 
 ## Requirements
 - Python 2.7
+- Functioning NRPE setup
+  - http://www.tecmint.com/how-to-add-linux-host-to-nagios-monitoring-server/ for instructions
 
 ## Installation
-- TODO
-
-## Command Line Parameters
-- --process-names - [*optional*] - comma-separated list of process names as they appear in supervisorctl status
+- Copy check_supervisord.py to /usr/local/nagios/libexec/
+- ```chmod a+x /usr/local/nagios/libexec/check_supervisord.py```
+- ```chown nagios:nagios /usr/local/nagios/libexec/check_supervisord.py```
+- Add command to *nrpe.cfg*:
+  - ```command[check_supervisord]=/usr/bin/sudo /usr/local/nagios/libexec/check_supervisord.py```
+- Allow nagios user to run the check with sudo without requiring a password
+  - Use ```visudo``` command to edit */etc/sudoers* and add following:
+    ```
+    Defaults:nagios !requiretty
+    nagios    ALL=(ALL)   NOPASSWD:/usr/local/nagios/libexec/check_supervisord.py
+    ```
 
 ## Example Usage
-- TODO
+```
+[user@host libexec]# ./check_nrpe -H localhost -c check_supervisord
+OK - Service and all processes running
+```
 
-### commands.cfg
-- TODO
-
-### services.cfg
-- TODO
+### Sample services.cfg
+```
+define service{
+    use                 generic-service
+    hostgroup_name	    supervisord_hosts
+    service_description Check Supervisord
+    check_command	    check_nrpe!check_supervisord
+}
+```
 
 
 License
