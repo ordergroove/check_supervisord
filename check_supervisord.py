@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.7
 """Supervisord status checker"""
 
 import sys
@@ -39,7 +39,7 @@ class NagiosPlugin(object):
 
 
 class SupervisordServiceCheck(NagiosPlugin):
-    CHECK_CMD = ['sudo', 'service', 'supervisord', 'status']
+    CHECK_CMD = ['service', 'supervisord', 'status']
 
     def __init__(self, verbose=False, warning=None, critical=None):
         super(SupervisordServiceCheck, self).__init__(warning, critical)
@@ -54,7 +54,7 @@ class SupervisordServiceCheck(NagiosPlugin):
 
 
 class SupervisordProcessCheck(NagiosPlugin):
-    CHECK_CMD = ['sudo', 'supervisorctl', 'status']
+    CHECK_CMD = ['supervisorctl', 'status']
 
     supervisor_states = {
         NagiosPlugin.OK: ['STOPPED', 'RUNNING'],
