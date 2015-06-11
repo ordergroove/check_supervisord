@@ -41,10 +41,8 @@ class NagiosPlugin(object):
 class SupervisordServiceCheck(NagiosPlugin):
     CHECK_CMD = ['service', 'supervisord', 'status']
 
-    def __init__(self, verbose=False, warning=None, critical=None):
-        super(SupervisordServiceCheck, self).__init__(warning, critical)
-        self.verbose = verbose
-        self._server_status = {}
+    def __init__(self):
+        super(SupervisordServiceCheck, self).__init__(None, None)
 
     def run_check(self):
         try:
@@ -62,11 +60,10 @@ class SupervisordProcessCheck(NagiosPlugin):
         NagiosPlugin.CRITICAL: ['EXITED', 'BACKOFF', 'FATAL', 'UNKNOWN']
     }
 
-    def __init__(self, process_names=None, verbose=False, warning=supervisor_states[NagiosPlugin.OK],
+    def __init__(self, process_names=None, warning=supervisor_states[NagiosPlugin.OK],
                  critical=supervisor_states[NagiosPlugin.CRITICAL]):
         super(SupervisordProcessCheck, self).__init__(warning, critical)
         self.process_names = process_names
-        self.verbose = verbose
         self._process_status = {}
 
     def run_check(self):
@@ -96,8 +93,8 @@ class SupervisordProcessCheck(NagiosPlugin):
 
 def main():
     parser = argparse.ArgumentParser(description='Supervisord server and process status checker')
-    parser.add_argument('-p', '--process-names', dest='proc_names', nargs='?', default=None,
-                        help="Name of process as it appears in supervisorctl status")
+    parser.add_argument('-p', '--process-names', dest='proc_names', nargs='+', default=None,
+                        help="Space separated names of processes as they appear in supervisorctl status")
 
     args = parser.parse_args()
 
