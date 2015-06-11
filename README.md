@@ -24,6 +24,15 @@ A Nagios NRPE plugin written in Python to monitor Supervisord server and process
 - --process-names - [*optional*] - Space separated names of processes to check.  Names should be as they appear in supervisorctl status. If unspecified, all managed processes will be checked.
 
 ## Example Usage
+
+As standalone:
+```
+[user@host ~]# sudo ./check_supervisord.py --process-names crashmail queue_consumers:cart_log_consumers
+Redirecting to /bin/systemctl status  supervisord.service
+CRITICAL - queue_consumers:cart_log_consumers is FATAL
+```
+
+As NRPE plugin:
 ```
 [user@host libexec]# ./check_nrpe -H localhost -c check_supervisord
 OK - Service and all processes running
