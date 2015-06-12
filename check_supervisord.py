@@ -60,7 +60,7 @@ class SupervisordProcessCheck(NagiosPlugin):
         NagiosPlugin.CRITICAL: ['EXITED', 'BACKOFF', 'FATAL', 'UNKNOWN']
     }
 
-    def __init__(self, process_names=None, warning=supervisor_states[NagiosPlugin.OK],
+    def __init__(self, process_names=None, warning=supervisor_states[NagiosPlugin.WARNING],
                  critical=supervisor_states[NagiosPlugin.CRITICAL]):
         super(SupervisordProcessCheck, self).__init__(warning, critical)
         self.process_names = process_names
@@ -74,8 +74,8 @@ class SupervisordProcessCheck(NagiosPlugin):
                 process_name, proc_status = line.split()[0], line.split()[1]
                 if not self.process_names or (self.process_names and process_name in self.process_names):
                     self._process_status[process_name] = proc_status
-                    is_critical = proc_status in self.supervisor_states[NagiosPlugin.CRITICAL]
-                    is_warning = proc_status in self.supervisor_states[NagiosPlugin.WARNING]
+                    is_critical |= proc_status in self.critical
+                    is_warning |= proc_status in self.warning
             if is_critical:
                 self.critical_state(self._get_msg())
             if is_warning:
